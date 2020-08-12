@@ -1,0 +1,8 @@
+/.vs/*
+/BotModelService/bin/*
+/BotService/bin/*
+*/obj/*
+/BotService/obj/*
+/BotService/obj/Debug/net5.0/*
+/BotService/obj/*
+/BotService/obj/*
