@@ -19,7 +19,7 @@ namespace BotModel.Bots.TelegramBot.Services
 		private readonly CancellationToken _cancellationToken;
 		private readonly ILogger _log;
 		
-		private IChatFileFactory _chatFileWorker(IChatId chatId) => SettingsHelper<SettingHelper0>.GetSetting(chatId).FileChatFactory;
+		private IChatFileFactory _chatFileWorker(IChatId chatId) => SettingsHelper0.GetChatService0(chatId).FileChatFactory;
 		
 		public Downloader(TelegramBotClient bot, CancellationToken cancellationToken)
 		{

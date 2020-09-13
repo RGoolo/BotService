@@ -28,7 +28,7 @@ namespace BotModel.Settings
 
 		public IChatFileFactory FileChatFactory { get; private set; }
 
-		public void Init(IChatId chatId, string directory)
+		public SettingHelper0(IChatId chatId, string directory)
 		{
 			FileChatFactory = new ChatFileFactory(chatId, directory); //This 
 			_settingsFile = FileChatFactory.SystemFile(SystemChatFile.Settings);

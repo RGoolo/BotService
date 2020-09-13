@@ -86,9 +86,11 @@ namespace BotModel.Bots.TelegramBot.Entity
 		{
 			try
 			{
+				var texter = new Texter(message.Text?.Text, message.Text?.Html ?? false);
                 var msg = await InternalMessage(message, chatId); //ToDo delete try and cath on lvl up
-
-                var cms = ChildrenMessage(msg, message, chatId);
+				//ToDo delete
+                message.Text = texter;
+				var cms = ChildrenMessage(msg, message, chatId);
 
 				foreach (var cm in cms)
                 {

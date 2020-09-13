@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BotModel.Bots.BotTypes.Class;
 using BotModel.Bots.BotTypes.Enums;
@@ -70,7 +71,10 @@ namespace BotService.Mappers
 				case string res2:
 					list.Add(new TransactionCommandMessage(MessageToBot.GetTextMsg(res2)));
 					break;
-					default:
+                case List<string> res2:
+                    list.Add(new TransactionCommandMessage(res2.Select(MessageToBot.GetTextMsg)));
+                    break;
+				default:
 					throw new GameException("Не поддерживает возращаемый тип.");
 				case null:
 					break;

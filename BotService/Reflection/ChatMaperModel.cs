@@ -81,7 +81,9 @@ namespace BotService.Reflection
 		protected BaseMapperMethodInfo(MethodInfo methodInfo, object instance, List<(Type, Func<IBotMessage, IMessageCommand, object>)> customProperty) : base(methodInfo, instance)
 		{
 			MethodInfo = methodInfo;
-            foreach (var (type, func) in customProperty)
+            FillDictionary();
+
+			foreach (var (type, func) in customProperty)
             {
 				parametersDic.Add(type, func);
             }
@@ -108,26 +110,32 @@ namespace BotService.Reflection
 			}
 		}
 
-		private static Dictionary<Type, Func<IBotMessage, IMessageCommand, object>> parametersDic => new Dictionary<Type, Func<IBotMessage, IMessageCommand, object>>()
-		{
-			[typeof(string[])] = (mess, command) => command.Values.ToArray(),
-			[typeof(IChatFile)] = (mess, command) => mess.Resource.File,
-			[typeof(IChatFile)] = (mess, command) => mess.Resource.File,
-				
-			[typeof(IEnumerable<string>)] = (mess, command) => command.Values,
-			[typeof(IMessageCommand)] = (mess, command) => command,
-			[typeof(IBotMessage)] = (mess, command) => mess,
-			[typeof(IUser)] = (mess, command) => mess.User,
+		private static Dictionary<Type, Func<IBotMessage, IMessageCommand, object>> parametersDic;
 
-			[typeof(IChatId)] = (mess, command) => mess.Chat.Id,
-			[typeof(IChatService0)] = (mess, command) => SettingsHelper<SettingHelper0>.GetSetting(mess.Chat.Id),
-			[typeof(IChatFileFactory)] = (mess, command) => SettingsHelper<SettingHelper0>.GetSetting(mess.Chat.Id).FileChatFactory,
-			[typeof(IMessageToBot)] = (mess, command) => mess.ReplyToCommandMessage,
-			[typeof(IMessageId)] = (mess, command) => mess.MessageId,
-			//[typeof(ISendMessage)] = (mess, command) => mess.User,
-		};
+        private void FillDictionary()
+        {
+            parametersDic = new Dictionary<Type, Func<IBotMessage, IMessageCommand, object>>()
+            {
+                [typeof(string[])] = (mess, command) => command.Values.ToArray(),
+                [typeof(IChatFile)] = (mess, command) => mess.Resource.File,
+                [typeof(IChatFile)] = (mess, command) => mess.Resource.File,
 
-		private object InvokeMethodWithCastParam(IBotMessage msg, IMessageCommand msgCommand)
+                [typeof(IEnumerable<string>)] = (mess, command) => command.Values,
+                [typeof(IMessageCommand)] = (mess, command) => command,
+                [typeof(IBotMessage)] = (mess, command) => mess,
+                [typeof(IUser)] = (mess, command) => mess.User,
+
+                [typeof(IChatId)] = (mess, command) => mess.Chat.Id,
+                [typeof(IChatService0)] = (mess, command) => SettingsHelper0.GetChatService0(mess.Chat.Id),
+                [typeof(IChatFileFactory)] = (mess, command) =>
+                    SettingsHelper0.GetChatService0(mess.Chat.Id).FileChatFactory,
+                [typeof(IMessageToBot)] = (mess, command) => mess.ReplyToCommandMessage,
+                [typeof(IMessageId)] = (mess, command) => mess.MessageId,
+                //[typeof(ISendMessage)] = (mess, command) => mess.User,
+            };
+        }
+
+        private object InvokeMethodWithCastParam(IBotMessage msg, IMessageCommand msgCommand)
 		{
 			var parameters = new List<object>();
 			var i = 0;

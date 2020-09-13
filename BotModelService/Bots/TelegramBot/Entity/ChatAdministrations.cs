@@ -6,6 +6,6 @@ namespace BotModel.Bots.TelegramBot.Entity
 	public class ChatAdministrations
 	{
 		public DateTime LastUpdate { get; set; }
-		public List<int> UserIds { get; set; }
+		public List<int> UserIds { get; set; } = new List<int>();
 	}
 }

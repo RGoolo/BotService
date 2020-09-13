@@ -7,22 +7,21 @@ using BotModel.Bots.BotTypes.Interfaces.Messages;
 
 namespace BotModel.Settings
 {
-	public static class SettingsHelper<T> where T: IChatService0, new()
+	public static class SettingsHelper0
 	{
 		//ToDo: in DB
-        private static readonly Dictionary<IChatId, T> Settings = new Dictionary<IChatId, T>();
+        private static readonly Dictionary<IChatId, SettingHelper0> Settings = new Dictionary<IChatId, SettingHelper0>();
 
-        public static T GetSetting(IUser user)
+        public static SettingHelper0 GetChatService0(IUser user)
 		{
-			return GetSetting(new ChatGuid(user.Id));
+			return GetChatService0(new ChatGuid(user.Id));
 		}
 
-		public static T GetSetting(IChatId chatId)
+		public static SettingHelper0 GetChatService0(IChatId chatId)
 		{
             if (!Settings.ContainsKey(chatId))
             {
-                var s = new T();
-                s.Init(chatId, Path.Combine(Directory, chatId.GetId.ToString()));
+                var s = new SettingHelper0(chatId, Path.Combine(Directory, chatId.GetId.ToString()));
                 Settings.Add(chatId, s);
             }
 

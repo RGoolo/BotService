@@ -72,7 +72,7 @@ namespace BotModel.Bots.TelegramBot.Entity
 			
 			if (message?.FileToken != null && (message.TypeMessage & MessageType.WithResource) != MessageType.Undefined)
 			{
-				var setting = SettingsHelper<SettingHelper0>.GetSetting(Chat.Id);
+				var setting = SettingsHelper0.GetChatService0(Chat.Id);
 				var file = setting.FileChatFactory.GetChatFile (message.FileToken);
 				Resource = new Resource(file, message.TypeMessage.Convert());
 			}

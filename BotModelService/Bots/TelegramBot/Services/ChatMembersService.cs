@@ -11,57 +11,76 @@ using Telegram.Bot.Types.Enums;
 
 namespace BotModel.Bots.TelegramBot.Services
 {
-	public class ChatMembersService
-	{
-		private readonly TelegramBotClient _bot;
-		private readonly CancellationToken _cancellationToken;
-		private readonly Dictionary<long, ChatAdministrations> _chatAdministations = new Dictionary<long, ChatAdministrations>();
-		private const int UpdatetimesTimeSeconds = 300;
-		private const int MyUserId = 62779148;
-		private readonly ILogger _log;
+    public class ChatMembersService
+    {
+        private readonly TelegramBotClient _bot;
+        private readonly CancellationToken _cancellationToken;
 
-		public ChatMembersService(TelegramBotClient bot, CancellationToken cancellationToken)
-		{
-			_bot = bot;
-			_cancellationToken = cancellationToken;
-		}
+        private readonly Dictionary<long, ChatAdministrations> _chatAdministations =
+            new Dictionary<long, ChatAdministrations>();
 
-		public TypeUser GetTypeUser(Message msg, bool isBot)
-		{
-			if (isBot)
-				return TypeUser.Bot;
+        private const int UpdatetimesTimeSeconds = 300;
+        private const int MyUserId = 62779148;
+        private readonly ILogger _log;
 
-			if (msg.Chat.Type == ChatType.Private)
-				return GetTypeUser(true, msg);
+        public ChatMembersService(TelegramBotClient bot, CancellationToken cancellationToken)
+        {
+            _bot = bot;
+            _cancellationToken = cancellationToken;
+        }
 
-			if (!_chatAdministations.ContainsKey(msg.Chat.Id) || (DateTime.Now - _chatAdministations[msg.Chat.Id].LastUpdate).TotalSeconds > UpdatetimesTimeSeconds)
-			{
-				var admins = _bot.GetChatAdministratorsAsync(msg.Chat.Id, _cancellationToken).Result;
+        public TypeUser GetTypeUser(Message msg, bool isBot)
+        {
+            try
+            {
+                return InternalGetTypeUser(msg, isBot);
+            }
+            catch(System.Exception ex)
+            {
+                _log.Error(ex);
+            }
 
-				var chatAdmins = new ChatAdministrations();
-				chatAdmins.UserIds.AddRange(admins.Select(x => x.User.Id));
-				chatAdmins.LastUpdate = DateTime.Now;
+            return TypeUser.None;
+        }
 
-				if (_chatAdministations.ContainsKey(msg.Chat.Id))
-					_chatAdministations[msg.Chat.Id] = chatAdmins;
-				else
-					_chatAdministations.TryAdd(msg.Chat.Id, chatAdmins);
-			}
 
-			return GetTypeUser(_chatAdministations[msg.Chat.Id].UserIds.Contains(msg.From.Id), msg);
-		}
+        private TypeUser InternalGetTypeUser(Message msg, bool isBot)
+        {
+            if (isBot)
+                return TypeUser.Bot;
 
-		private TypeUser GetTypeUser(bool isAdmin, Message msg)
-		{
-			var userType = TypeUser.User;
+            if (msg.Chat.Type == ChatType.Private)
+                return GetTypeUser(true, msg);
 
-			if (msg.From.Id == MyUserId)
-				userType |= TypeUser.Developer;
+            if (!_chatAdministations.ContainsKey(msg.Chat.Id) ||
+                (DateTime.Now - _chatAdministations[msg.Chat.Id].LastUpdate).TotalSeconds > UpdatetimesTimeSeconds)
+            {
+                var admins = _bot.GetChatAdministratorsAsync(msg.Chat.Id, _cancellationToken).Result;
 
-			if (isAdmin)
-				userType |= TypeUser.Admin;
+                var chatAdmins = new ChatAdministrations();
+                chatAdmins.UserIds.AddRange(admins.Select(x => x.User.Id));
+                chatAdmins.LastUpdate = DateTime.Now;
 
-			return userType;
-		}
-	}
+                if (_chatAdministations.ContainsKey(msg.Chat.Id))
+                    _chatAdministations[msg.Chat.Id] = chatAdmins;
+                else
+                    _chatAdministations.TryAdd(msg.Chat.Id, chatAdmins);
+            }
+
+            return GetTypeUser(_chatAdministations[msg.Chat.Id].UserIds.Contains(msg.From.Id), msg);
+        }
+
+        private TypeUser GetTypeUser(bool isAdmin, Message msg)
+        {
+            var userType = TypeUser.User;
+
+            if (msg.From.Id == MyUserId)
+                userType |= TypeUser.Developer;
+
+            if (isAdmin)
+                userType |= TypeUser.Admin;
+
+            return userType;
+        }
+    }
 }

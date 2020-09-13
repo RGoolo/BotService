@@ -17,7 +17,7 @@ namespace BotModel.Bots.TelegramBot.Services
 			if (msg.Text?.Html != true || (!msg.TypeMessage.IsText())|| string.IsNullOrEmpty(msg.Text.Text))
 				return result;
 
-			var setting = SettingsHelper<SettingHelper0>.GetSetting(chatId);
+			var setting = SettingsHelper0.GetChatService0(chatId);
             var defaultUrl = ""; //ToDo setting.Web.DefaultUri;
 			
 			var links = TelegramHtml.GetLinks(msg.Text.Text, defaultUrl);

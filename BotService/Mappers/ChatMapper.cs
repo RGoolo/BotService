@@ -26,7 +26,7 @@ namespace BotService.Mappers
 			ChatId = chatId;
 			_typeBot = typeBot;
         
-            var settingHelper = SettingsHelper<SettingHelper0>.GetSetting(chatId);
+            var settingHelper = SettingsHelper0.GetChatService0(chatId);
 			
 			var all = new MethodsAllMapper(sendMsg, settingHelper, customProperty);
 			var concrete = new MethodsConcreteMapper(sendMsg, settingHelper, customProperty);
